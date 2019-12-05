@@ -10,3 +10,70 @@ Cerințe:
 	- gcc
 	- nasm
 	- python >= 3.0
+
+PARCURGERE IN POSTORDINE A UNEI NOTATII POLONEZE IN ASSEMBLY X86
+################################################################
+
+			                                   
+Am parcurs recursiv arborele prin intermediul a doua apeluri,
+unul pe fiul stang si celalalt pe fiul drept si am adaugat 
+totul intr-un vector cu tot cu semne, apoi am retinut dimensiunea
+vectorului creat. Apoi pentru a calcula am transformat fiecare numar
+prin functia atoi implementata care parcurge string-urile caracter cu caracter
+si verifica daca un numar este negativ retinandu-i semnul '-'.
+                                        
+In caz afirmativ se face complementul lui 2 prin negare
+si incrementare. Apoi la parcurgerea vectorului il iau de la coada
+spre inceput cu offset de 4 si fac push in stiva de fiecare numar
+pana cand intalnesc un operator dupa care fac 2x pop ( in cazul meu a fost
+nevoie sa fac un pop in plus pentru a retrage ecx-ul de pe stiva pe care
+l-am pastrat pentru a-l folosi si in alte operatii). Rezultatul
+operatiei ii fac push pe stiva pana cand ajunge la ultima operatie
+astfel ca ecx este 0 => a fost parcurs tot vectorul si returnez rezultatul
+final.                
+                                        
+Pentru inmultiri si impartiri am folosit imul si idiv, iar pentru vector
+am alocat mai multa memorie pentru a fi sigur ca nu o depaseste. 
+                   	                                    	                                                         
+Expresia prefixată va fi primita sub forma unui AST (abstract syntax tree) 
+în urma apelului unei funcții externe - getAST(). 
+Citirea se va face de catre fucția getAST() de la tastatură.
+       
+       
+Arbore sintactic abstract       
+                                        
+Arborii sintactici abstracți sunt o structură de date cu ajutorul căreia 
+compilatoarele reprezintă structura unui program. În urma parcurgerii AST-ului, 
+un compilator generează metadatele necesare transformării din cod de nivel înalt 
+în cod assembly. Puteți găsi mai multe informații despre AST aici.
+                                       
+Reprezentarea sub forma unui AST a unui program/expresii are avantajul de a defini 
+clar ordinea evaluarii operațiilor fară a fi necesare paranteze. Astfel expresia 
+4 / 64 - 2 * (3 + 1) .
+                                                     
+Programul va folosi ca input un string în care se află parcurgerea preordine a arborelui, 
+în ordinea, rădăcină, stânga, dreapta, ce poarta numele de Forma poloneza prefixată. 
+Această expresie este citită și transformată în arbore de către functia getAST() din 
+fișierul ASTUtils.o, funcție care este apelată și în schelet. De asemenea, de eliberarea 
+memoriei utilizate pentru reținerea arborelui se ocupă funcția freeAST() din același fișier, 
+care este de asemenea apelată în schelet.                                      
+                                        
+De asemenea, structura folosită pentru a stoca un nod din arbore arată astfel:
+                                        
+ struct __attribute__((__packed__)) Node
+                    {                   
+                 char* data;            
+             struct Node* left;         
+             struct Node* right;        
+                   };                   
+                                        
+Prototipurile funțiilor definite în fișierul ASTUtils.o sunt:
+                                        
+         struct Node* getAST();         
+    void freeAST(struct Node* root);    
+                                        
+Stringul data conține fie un operator (+, -, *, /), fie un operand (număr). 
+În ambele cazuri, stringul se termină cu caracterul \0. 
+                                        
+                                        
+
